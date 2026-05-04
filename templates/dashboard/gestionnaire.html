@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}Tableau de bord{% endblock %}
+{% block page_title %}Tableau de bord Gestionnaire{% endblock %}
+{% block content %}
+<div class="alert alert-success">
+    <i class="bi bi-check-circle me-2"></i>
+    Bienvenue <strong>{{ user.get_full_name|default:user.username }}</strong> !
+    Le Sprint 2 fonctionne. Les modules arrivent aux sprints suivants.
+</div>
+{% endblock %}

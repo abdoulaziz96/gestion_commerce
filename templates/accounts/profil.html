@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Mon Profil{% endblock %}
+{% block page_title %}Mon Profil{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card p-4">
+            <h5 class="fw-bold mb-4"><i class="bi bi-person-circle me-2"></i>Informations du profil</h5>
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Prénom</label>
+                    <input type="text" name="first_name" class="form-control"
+                           value="{{ user.first_name }}">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Nom</label>
+                    <input type="text" name="last_name" class="form-control"
+                           value="{{ user.last_name }}">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" class="form-control"
+                           value="{{ user.email }}">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Rôle</label>
+                    <input type="text" class="form-control"
+                           value="{{ user.get_role_display }}" disabled>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save me-1"></i>Enregistrer
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

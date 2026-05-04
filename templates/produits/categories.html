@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}Catégories{% endblock %}
+{% block page_title %}Gestion des Catégories{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-5">
+        <div class="card p-4">
+            <h6 class="fw-bold mb-3">Ajouter une catégorie</h6>
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Nom *</label>
+                    {{ form.nom }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    {{ form.description }}
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-plus-lg me-1"></i>Ajouter
+                </button>
+            </form>
+        </div>
+    </div>
+    <div class="col-md-7">
+        <div class="card">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-dark">
+                        <tr><th>Catégorie</th><th>Description</th><th>Produits</th></tr>
+                    </thead>
+                    <tbody>
+                    {% for c in categories %}
+                    <tr>
+                        <td class="fw-semibold">{{ c.nom }}</td>
+                        <td class="text-muted">{{ c.description|truncatechars:50 }}</td>
+                        <td><span class="badge bg-primary">{{ c.produits.count }}</span></td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="3" class="text-center text-muted py-3">Aucune catégorie</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
