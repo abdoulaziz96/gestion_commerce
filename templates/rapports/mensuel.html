@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block title %}Rapport mensuel{% endblock %}
+{% block page_title %}Rapport Mensuel{% endblock %}
+
+{% block content %}
+<div class="card p-3 mb-3">
+    <form method="get" class="row g-2 align-items-end">
+        <div class="col-md-3">
+            <label class="form-label small fw-semibold">Mois</label>
+            <select name="mois" class="form-select">
+                {% for m in mois_list %}
+                <option value="{{ m }}" {% if m == mois %}selected{% endif %}>
+                    Mois {{ m }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small fw-semibold">Année</label>
+            <input type="number" name="annee" class="form-control" value="{{ annee }}">
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-search me-1"></i>Afficher
+            </button>
+        </div>
+    </form>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card p-3 text-center border-success border-2">
+            <div class="text-muted small">CA du mois</div>
+            <div class="fw-bold fs-3 text-success">{{ ca_total|floatformat:0 }} FCFA</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card p-3 text-center border-danger border-2">
+            <div class="text-muted small">Dépenses</div>
+            <div class="fw-bold fs-3 text-danger">{{ dep_total|floatformat:0 }} FCFA</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card p-3 text-center border-primary border-2">
+            <div class="text-muted small">Bénéfice net</div>
+            <div class="fw-bold fs-3
+                {% if benefice >= 0 %}text-primary{% else %}text-danger{% endif %}">
+                {{ benefice|floatformat:0 }} FCFA
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Top produits -->
+<div class="card mb-3 p-3">
+    <h6 class="fw-bold mb-3"><i class="bi bi-trophy me-2"></i>Top produits du mois</h6>
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead class="table-dark">
+                <tr><th>Produit</th><th>Quantité vendue</th><th>CA généré</th></tr>
+            </thead>
+            <tbody>
+            {% for p in top %}
+            <tr>
+                <td class="fw-semibold">{{ p.produit__nom }}</td>
+                <td>{{ p.qte }}</td>
+                <td class="text-success fw-bold">{{ p.ca|floatformat:0 }} FCFA</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" class="text-center text-muted py-3">Aucune vente ce mois.</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,9 +1,116 @@
 {% extends 'base.html' %}
-{% block title %}Dashboard Admin{% endblock %}
+{% block title %}Vue Admin{% endblock %}
 {% block page_title %}Vue Globale — Administrateur{% endblock %}
+
 {% block content %}
-<div class="alert alert-info">
-    <i class="bi bi-graph-up me-2"></i>
-    Tableau de bord Administrateur — Sprint 5 complétera cette vue.
+<!-- KPI Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-2">
+        <div class="card p-3 border-start border-primary border-4">
+            <div class="text-muted small">CA Aujourd'hui</div>
+            <div class="fw-bold fs-5 text-primary">{{ ca_jour|floatformat:0 }}</div>
+            <div class="small text-muted">FCFA</div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card p-3 border-start border-info border-4">
+            <div class="text-muted small">CA Semaine</div>
+            <div class="fw-bold fs-5 text-info">{{ ca_semaine|floatformat:0 }}</div>
+            <div class="small text-muted">FCFA</div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card p-3 border-start border-success border-4">
+            <div class="text-muted small">CA Mois</div>
+            <div class="fw-bold fs-5 text-success">{{ ca_mois|floatformat:0 }}</div>
+            <div class="small text-muted">FCFA</div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card p-3 border-start border-danger border-4">
+            <div class="text-muted small">Dépenses mois</div>
+            <div class="fw-bold fs-5 text-danger">{{ depenses_mois|floatformat:0 }}</div>
+            <div class="small text-muted">FCFA</div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card p-3 border-start border-4
+            {% if benefice_net >= 0 %}border-success{% else %}border-danger{% endif %}">
+            <div class="text-muted small">Bénéfice net</div>
+            <div class="fw-bold fs-5
+                {% if benefice_net >= 0 %}text-success{% else %}text-danger{% endif %}">
+                {{ benefice_net|floatformat:0 }}
+            </div>
+            <div class="small text-muted">FCFA</div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card p-3 border-start border-warning border-4">
+            <div class="text-muted small">Nb ventes mois</div>
+            <div class="fw-bold fs-5 text-warning">{{ nb_ventes }}</div>
+            <div class="small text-muted">transactions</div>
+        </div>
+    </div>
 </div>
+
+{% if produits_alerte %}
+<div class="alert alert-danger mb-4">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+    <strong>{{ produits_alerte|length }} produit(s) en rupture ou stock bas !</strong>
+    {% for p in produits_alerte %}
+    <span class="badge bg-danger ms-1">{{ p.nom }} ({{ p.quantite_stock }})</span>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- Graphique 30 jours -->
+<div class="card p-3 mb-3">
+    <h6 class="fw-bold mb-3">
+        <i class="bi bi-graph-up me-2"></i>Évolution CA vs Dépenses — 30 jours
+    </h6>
+    <canvas id="chartAdmin" height="80"></canvas>
+</div>
+
+{% if messages_non_lus %}
+<div class="alert alert-info">
+    <i class="bi bi-chat-dots me-2"></i>
+    Vous avez <strong>{{ messages_non_lus }}</strong> message(s) non lu(s).
+    <a href="{% url 'messagerie:inbox' %}" class="alert-link ms-2">Voir la messagerie</a>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const ctx = document.getElementById('chartAdmin').getContext('2d');
+new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: {{ labels|safe }},
+        datasets: [
+            {
+                label: 'CA (FCFA)',
+                data: {{ data_ca|safe }},
+                borderColor: 'rgba(25, 135, 84, 1)',
+                backgroundColor: 'rgba(25, 135, 84, 0.1)',
+                fill: true,
+                tension: 0.4,
+            },
+            {
+                label: 'Dépenses (FCFA)',
+                data: {{ data_dep|safe }},
+                borderColor: 'rgba(220, 53, 69, 1)',
+                backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                fill: true,
+                tension: 0.4,
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        scales: { y: { beginAtZero: true } }
+    }
+});
+</script>
 {% endblock %}

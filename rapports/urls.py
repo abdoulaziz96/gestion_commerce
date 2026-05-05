@@ -1,6 +1,11 @@
 from django.urls import path
-from django.shortcuts import render
+from . import views
+
 app_name = 'rapports'
+
 urlpatterns = [
-    path('', lambda r: render(r, 'coming_soon.html', {'module': 'Rapports'}), name='index'),
+    path('', views.rapport_journalier, name='index'),
+    path('journalier/', views.rapport_journalier, name='journalier'),
+    path('mensuel/', views.rapport_mensuel, name='mensuel'),
+    path('exporter/journalier/', views.exporter_pdf_journalier, name='export_pdf_journalier'),
 ]

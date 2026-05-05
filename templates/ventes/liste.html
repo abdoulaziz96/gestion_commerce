@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block title %}Ventes{% endblock %}
+{% block page_title %}Historique des Ventes{% endblock %}
+
+{% block content %}
+<div class="card mb-3 p-3">
+    <form method="get" class="row g-2 align-items-end">
+        <div class="col-md-3">
+            <label class="form-label small">Date début</label>
+            <input type="date" name="date_debut" class="form-control"
+                   value="{{ request.GET.date_debut }}">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small">Date fin</label>
+            <input type="date" name="date_fin" class="form-control"
+                   value="{{ request.GET.date_fin }}">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label small">Produit</label>
+            <input type="text" name="produit" class="form-control"
+                   placeholder="Rechercher..." value="{{ request.GET.produit }}">
+        </div>
+        <div class="col-md-2 d-flex gap-2">
+            <button type="submit" class="btn btn-primary flex-grow-1">
+                <i class="bi bi-search"></i>
+            </button>
+            <a href="{% url 'ventes:enregistrer' %}" class="btn btn-success flex-grow-1">
+                <i class="bi bi-plus-lg">Ajouter</i>
+            </a>
+        </div>
+    </form>
+</div>
+
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Produit</th>
+                    <th>Qté</th>
+                    <th>Prix unitaire</th>
+                    <th>Total</th>
+                    <th>Client</th>
+                    <th>Date</th>
+                    <th>Statut</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for v in ventes %}
+            <tr {% if v.annulee %}class="table-secondary text-decoration-line-through"{% endif %}>
+                <td class="text-muted small">{{ v.id }}</td>
+                <td class="fw-semibold">{{ v.produit.nom }}</td>
+                <td>{{ v.quantite }}</td>
+                <td>{{ v.prix_unitaire|floatformat:0 }} FCFA</td>
+                <td class="fw-bold">{{ v.montant_total|floatformat:0 }} FCFA</td>
+                <td class="text-muted">{{ v.client|default:"—" }}</td>
+                <td class="small">{{ v.date_vente|date:"d/m/Y H:i" }}</td>
+                <td>
+                    {% if v.annulee %}
+                        <span class="badge bg-secondary">Annulée</span>
+                    {% else %}
+                        <span class="badge bg-success">Validée</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if not v.annulee %}
+                    <a href="{% url 'ventes:annuler' v.pk %}"
+                       class="btn btn-sm btn-outline-danger">
+                        <i class="bi bi-x-circle"></i>
+                    </a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="9" class="text-center text-muted py-4">
+                    <i class="bi bi-cart-x fs-2 d-block mb-2"></i>
+                    Aucune vente enregistrée.
+                    <a href="{% url 'ventes:enregistrer' %}">Enregistrer la première</a>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% if ventes %}
+    <div class="p-3 border-top d-flex justify-content-end">
+        <span class="fw-bold">Total : {{ total|floatformat:0 }} FCFA</span>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

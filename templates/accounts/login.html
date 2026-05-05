@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block content_unauthenticated %}
+<div class="min-vh-100 d-flex align-items-center justify-content-center"
+     style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);">
+    <div class="card p-4" style="width: 100%; max-width: 420px;">
+        <div class="text-center mb-4">
+            <i class="bi bi-shop fs-1 text-primary"></i>
+            <h4 class="fw-bold mt-2">Gestion Commerce</h4>
+            <p class="text-muted small">Boutique d'Ornement Immobilier</p>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-danger py-2">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Identifiant</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-person"></i></span>
+                    <input type="text" name="username" class="form-control"
+                           placeholder="Votre identifiant" required autofocus>
+                </div>
+            </div>
+            <div class="mb-4">
+                <label class="form-label fw-semibold">Mot de passe</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                    <input type="password" name="password" class="form-control"
+                           placeholder="Votre mot de passe" required>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
+                <i class="bi bi-box-arrow-in-right me-2"></i>Se connecter
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

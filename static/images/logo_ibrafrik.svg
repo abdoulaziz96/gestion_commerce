@@ -1,0 +1,38 @@
+<svg width="100%" viewBox="0 0 680 220" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fond hexagone principal -->
+  <polygon points="100,28 162,63 162,133 100,168 38,133 38,63" fill="#8B4513"/>
+  <polygon points="100,36 154,67 154,129 100,160 46,129 46,67" fill="#D2691E"/>
+
+  <!-- Motif géométrique africain dans l'hexagone -->
+  <polygon points="100,52 130,68 130,100 100,116 70,100 70,68" fill="#F4A460" opacity="0.6"/>
+  <polygon points="100,60 122,72 122,96 100,108 78,96 78,72" fill="#8B4513"/>
+  <polygon points="100,64 110,76 100,88 90,76" fill="#DAA520"/>
+
+  <!-- Lignes décoratives -->
+  <line x1="70" y1="68" x2="130" y2="68" stroke="#F4A460" stroke-width="1.5" opacity="0.7"/>
+  <line x1="70" y1="100" x2="130" y2="100" stroke="#F4A460" stroke-width="1.5" opacity="0.7"/>
+
+  <!-- Triangles coins -->
+  <polygon points="46,67 58,67 46,80" fill="#DAA520" opacity="0.8"/>
+  <polygon points="154,67 142,67 154,80" fill="#DAA520" opacity="0.8"/>
+  <polygon points="46,129 58,129 46,116" fill="#DAA520" opacity="0.8"/>
+  <polygon points="154,129 142,129 154,116" fill="#DAA520" opacity="0.8"/>
+
+  <!-- Point central -->
+  <circle cx="100" cy="76" r="5" fill="#FFD700"/>
+  <circle cx="100" cy="76" r="3" fill="#8B4513"/>
+
+  <!-- Bordure hexagone -->
+  <polygon points="100,28 162,63 162,133 100,168 38,133 38,63" fill="none" stroke="#DAA520" stroke-width="2"/>
+
+  <!-- Texte IBRAFRIK -->
+  <text x="185" y="120" font-family="Georgia, serif" font-size="52" font-weight="700"
+        fill="#8B4513" letter-spacing="4">IBRAFRIK</text>
+
+  <!-- Ligne dorée -->
+  <line x1="185" y1="134" x2="560" y2="134" stroke="#DAA520" stroke-width="2.5"/>
+
+  <!-- Sous-titre -->
+  <text x="372" y="165" text-anchor="middle" font-family="Georgia, serif"
+        font-size="20" letter-spacing="10" fill="#D2691E">DECOR</text>
+</svg>

@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% block title %}Rapport journalier{% endblock %}
+{% block page_title %}Rapport Journalier{% endblock %}
+
+{% block content %}
+<div class="card p-3 mb-3">
+    <form method="get" class="row g-2 align-items-end">
+        <div class="col-md-4">
+            <label class="form-label small fw-semibold">Sélectionner une date</label>
+            <input type="date" name="date" class="form-control"
+                   value="{{ date|date:'Y-m-d' }}">
+        </div>
+        <div class="col-md-3 d-flex gap-2">
+            <button type="submit" class="btn btn-primary flex-grow-1">
+                <i class="bi bi-search me-1"></i>Afficher
+            </button>
+            <a href="{% url 'rapports:export_pdf_journalier' %}?date={{ date|date:'Y-m-d' }}"
+               class="btn btn-danger flex-grow-1">
+                <i class="bi bi-file-pdf me-1"></i>PDF
+            </a>
+        </div>
+    </form>
+</div>
+
+<!-- Résumé -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card p-3 text-center border-success border-2">
+            <div class="text-muted small">Chiffre d'affaires</div>
+            <div class="fw-bold fs-3 text-success">{{ ca_total|floatformat:0 }} FCFA</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card p-3 text-center border-danger border-2">
+            <div class="text-muted small">Total dépenses</div>
+            <div class="fw-bold fs-3 text-danger">{{ dep_total|floatformat:0 }} FCFA</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card p-3 text-center border-2
+            {% if solde >= 0 %}border-primary{% else %}border-warning{% endif %}">
+            <div class="text-muted small">Solde net</div>
+            <div class="fw-bold fs-3
+                {% if solde >= 0 %}text-primary{% else %}text-warning{% endif %}">
+                {{ solde|floatformat:0 }} FCFA
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Ventes -->
+<div class="card mb-3">
+    <div class="card-header fw-bold">
+        <i class="bi bi-cart3 me-2"></i>Ventes du {{ date|date:"d/m/Y" }}
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-dark">
+                <tr>
+                    <th>Produit</th>
+                    <th>Qté</th>
+                    <th>Prix unit.</th>
+                    <th>Total</th>
+                    <th>Client</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for v in ventes %}
+            <tr>
+                <td>{{ v.produit.nom }}</td>
+                <td>{{ v.quantite }}</td>
+                <td>{{ v.prix_unitaire|floatformat:0 }} FCFA</td>
+                <td class="fw-bold">{{ v.montant_total|floatformat:0 }} FCFA</td>
+                <td class="text-muted">{{ v.client|default:"—" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="text-center text-muted py-3">Aucune vente.</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Dépenses -->
+<div class="card">
+    <div class="card-header fw-bold">
+        <i class="bi bi-wallet2 me-2"></i>Dépenses du {{ date|date:"d/m/Y" }}
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-dark">
+                <tr><th>Libellé</th><th>Catégorie</th><th>Montant</th></tr>
+            </thead>
+            <tbody>
+            {% for d in depenses %}
+            <tr>
+                <td>{{ d.libelle }}</td>
+                <td><span class="badge bg-secondary">{{ d.categorie_depense }}</span></td>
+                <td class="text-danger fw-bold">{{ d.montant|floatformat:0 }} FCFA</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" class="text-center text-muted py-3">Aucune dépense.</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

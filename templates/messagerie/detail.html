@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Message{% endblock %}
+{% block page_title %}Détail du Message{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card p-4">
+            <div class="d-flex justify-content-between mb-3">
+                <div>
+                    <span class="text-muted small">De :</span>
+                    <strong class="ms-1">
+                        {{ message.expediteur.get_full_name|default:message.expediteur.username }}
+                    </strong>
+                </div>
+                <span class="text-muted small">
+                    {{ message.date_envoi|date:"d/m/Y à H:i" }}
+                </span>
+            </div>
+            <hr>
+            <p class="mt-3" style="white-space: pre-wrap;">{{ message.contenu }}</p>
+            <hr>
+            <div class="d-flex gap-2 mt-2">
+                <a href="{% url 'messagerie:envoyer' %}?to={{ message.expediteur.pk }}"
+                   class="btn btn-primary btn-sm">
+                    <i class="bi bi-reply me-1"></i>Répondre
+                </a>
+                <a href="{% url 'messagerie:inbox' %}"
+                   class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-arrow-left me-1"></i>Retour
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

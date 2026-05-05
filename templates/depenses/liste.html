@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block title %}Dépenses{% endblock %}
+{% block page_title %}Gestion des Dépenses{% endblock %}
+
+{% block content %}
+<div class="card mb-3 p-3">
+    <form method="get" class="row g-2 align-items-end">
+        <div class="col-md-4">
+            <label class="form-label small">Date début</label>
+            <input type="date" name="date_debut" class="form-control"
+                   value="{{ request.GET.date_debut }}">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label small">Date fin</label>
+            <input type="date" name="date_fin" class="form-control"
+                   value="{{ request.GET.date_fin }}">
+        </div>
+        <div class="col-md-4 d-flex gap-2 align-items-end">
+            <button type="submit" class="btn btn-primary flex-grow-1">
+                <i class="bi bi-search"></i> Filtrer
+            </button>
+            <a href="{% url 'depenses:ajouter' %}" class="btn btn-success flex-grow-1">
+                <i class="bi bi-plus-lg"></i> Ajouter
+            </a>
+        </div>
+    </form>
+</div>
+
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-dark">
+                <tr>
+                    <th>Libellé</th>
+                    <th>Catégorie</th>
+                    <th>Montant</th>
+                    <th>Date</th>
+                    <th>Justificatif</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for d in depenses %}
+            <tr>
+                <td class="fw-semibold">{{ d.libelle }}</td>
+                <td><span class="badge bg-secondary">{{ d.categorie_depense }}</span></td>
+                <td class="text-danger fw-bold">{{ d.montant|floatformat:0 }} FCFA</td>
+                <td>{{ d.date_depense|date:"d/m/Y" }}</td>
+                <td>
+                    {% if d.justificatif %}
+                    <a href="{{ d.justificatif.url }}" target="_blank"
+                       class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-paperclip"></i>
+                    </a>
+                    {% else %}
+                    <span class="text-muted">—</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="text-center text-muted py-4">
+                    <i class="bi bi-wallet2 fs-2 d-block mb-2"></i>
+                    Aucune dépense enregistrée.
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% if depenses %}
+    <div class="p-3 border-top d-flex justify-content-end">
+        <span class="fw-bold text-danger">Total : {{ total|floatformat:0 }} FCFA</span>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

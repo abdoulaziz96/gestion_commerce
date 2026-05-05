@@ -1,10 +1,130 @@
 {% extends 'base.html' %}
 {% block title %}Tableau de bord{% endblock %}
-{% block page_title %}Tableau de bord Gestionnaire{% endblock %}
+{% block page_title %}Tableau de bord{% endblock %}
+
 {% block content %}
-<div class="alert alert-success">
-    <i class="bi bi-check-circle me-2"></i>
-    Bienvenue <strong>{{ user.get_full_name|default:user.username }}</strong> !
-    Le Sprint 2 fonctionne. Les modules arrivent aux sprints suivants.
+<!-- KPI Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card p-3 border-start border-primary border-4">
+            <div class="text-muted small">CA Aujourd'hui</div>
+            <div class="fw-bold fs-4 text-primary">{{ ca_jour|floatformat:0 }} FCFA</div>
+            <div class="text-muted small">{{ nb_ventes_jour }} vente(s)</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card p-3 border-start border-success border-4">
+            <div class="text-muted small">CA ce mois</div>
+            <div class="fw-bold fs-4 text-success">{{ ca_mois|floatformat:0 }} FCFA</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card p-3 border-start border-danger border-4">
+            <div class="text-muted small">Dépenses ce mois</div>
+            <div class="fw-bold fs-4 text-danger">{{ depenses_mois|floatformat:0 }} FCFA</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card p-3 border-start border-4
+            {% if benefice >= 0 %}border-success{% else %}border-danger{% endif %}">
+            <div class="text-muted small">Bénéfice net</div>
+            <div class="fw-bold fs-4
+                {% if benefice >= 0 %}text-success{% else %}text-danger{% endif %}">
+                {{ benefice|floatformat:0 }} FCFA
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- Alertes stock -->
+{% if produits_alerte %}
+<div class="alert alert-warning d-flex align-items-center gap-2 mb-4">
+    <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+    <div>
+        <strong>{{ produits_alerte|length }} produit(s) en alerte stock !</strong>
+        {% for p in produits_alerte %}
+        <span class="badge bg-warning text-dark ms-1">{{ p.nom }} ({{ p.quantite_stock }})</span>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<div class="row g-3">
+    <!-- Graphique CA 7 jours -->
+    <div class="col-md-8">
+        <div class="card p-3">
+            <h6 class="fw-bold mb-3">
+                <i class="bi bi-bar-chart me-2"></i>CA des 7 derniers jours
+            </h6>
+            <canvas id="chartCA" height="100"></canvas>
+        </div>
+    </div>
+
+    <!-- Top produits -->
+    <div class="col-md-4">
+        <div class="card p-3">
+            <h6 class="fw-bold mb-3">
+                <i class="bi bi-trophy me-2"></i>Top produits ce mois
+            </h6>
+            {% for p in top_produits %}
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="small fw-semibold">{{ p.produit__nom|truncatechars:20 }}</span>
+                <span class="badge bg-primary">{{ p.total_qte }} ventes</span>
+            </div>
+            <div class="progress mb-2" style="height: 5px;">
+                <div class="progress-bar" style="width: {{ p.total_qte }}0%"></div>
+            </div>
+            {% empty %}
+            <p class="text-muted small">Aucune vente ce mois.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Raccourcis -->
+<div class="row g-3 mt-2">
+    <div class="col-12">
+        <div class="card p-3">
+            <h6 class="fw-bold mb-3">Actions rapides</h6>
+            <div class="d-flex flex-wrap gap-2">
+                <a href="{% url 'ventes:enregistrer' %}" class="btn btn-success">
+                    <i class="bi bi-cart-plus me-1"></i>Nouvelle vente
+                </a>
+                <a href="{% url 'depenses:ajouter' %}" class="btn btn-danger">
+                    <i class="bi bi-wallet2 me-1"></i>Nouvelle dépense
+                </a>
+                <a href="{% url 'stock:entree' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle me-1"></i>Entrée stock
+                </a>
+                <a href="{% url 'rapports:journalier' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-file-earmark me-1"></i>Rapport du jour
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const ctx = document.getElementById('chartCA').getContext('2d');
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: {{ labels|safe }},
+        datasets: [{
+            label: 'CA (FCFA)',
+            data: {{ data_ca|safe }},
+            backgroundColor: 'rgba(13, 110, 253, 0.7)',
+            borderRadius: 6,
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true } }
+    }
+});
+</script>
 {% endblock %}

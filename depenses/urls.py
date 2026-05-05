@@ -1,6 +1,9 @@
 from django.urls import path
-from django.shortcuts import render
+from . import views
+
 app_name = 'depenses'
+
 urlpatterns = [
-    path('', lambda r: render(r, 'coming_soon.html', {'module': 'Dépenses'}), name='liste'),
+    path('', views.depense_liste, name='liste'),
+    path('ajouter/', views.depense_ajouter, name='ajouter'),
 ]

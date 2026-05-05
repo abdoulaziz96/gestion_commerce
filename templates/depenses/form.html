@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Ajouter une dépense{% endblock %}
+{% block page_title %}Enregistrer une Dépense{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card p-4">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Libellé *</label>
+                    {{ form.libelle }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Catégorie *</label>
+                    {{ form.categorie_depense }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Montant (FCFA) *</label>
+                    {{ form.montant }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Date *</label>
+                    {{ form.date_depense }}
+                </div>
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">Justificatif</label>
+                    {{ form.justificatif }}
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary px-4">
+                        <i class="bi bi-save me-1"></i>Enregistrer
+                    </button>
+                    <a href="{% url 'depenses:liste' %}" class="btn btn-outline-secondary">
+                        Annuler
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

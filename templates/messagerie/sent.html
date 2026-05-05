@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Messages envoyés{% endblock %}
+{% block page_title %}Messages Envoyés{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="d-flex gap-2">
+        <a href="{% url 'messagerie:inbox' %}"
+           class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-inbox me-1"></i>Reçus
+        </a>
+        <a href="{% url 'messagerie:sent' %}"
+           class="btn btn-primary btn-sm">
+            <i class="bi bi-send me-1"></i>Envoyés
+        </a>
+    </div>
+    <a href="{% url 'messagerie:envoyer' %}" class="btn btn-success btn-sm">
+        <i class="bi bi-pencil-square me-1"></i>Nouveau message
+    </a>
+</div>
+
+<div class="card">
+    {% for msg in messages_envoyes %}
+    <div class="d-block p-3 border-bottom">
+        <div class="d-flex justify-content-between align-items-start">
+            <div>
+                <span class="text-muted small">À :</span>
+                <span class="fw-semibold ms-1">
+                    {{ msg.destinataire.get_full_name|default:msg.destinataire.username }}
+                </span>
+                <span class="text-muted ms-2 small">
+                    {{ msg.contenu|truncatechars:60 }}
+                </span>
+            </div>
+            <div class="text-nowrap ms-3 d-flex align-items-center gap-2">
+                {% if msg.lu %}
+                <span class="badge bg-success">
+                    <i class="bi bi-check2-all"></i> Lu
+                </span>
+                {% else %}
+                <span class="badge bg-secondary">
+                    <i class="bi bi-check2"></i> Non lu
+                </span>
+                {% endif %}
+                <span class="text-muted small">
+                    {{ msg.date_envoi|date:"d/m/Y H:i" }}
+                </span>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="text-center text-muted py-5">
+        <i class="bi bi-send fs-1 d-block mb-2"></i>
+        Aucun message envoyé.
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
