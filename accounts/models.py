@@ -14,6 +14,13 @@ class Utilisateur(AbstractUser):
         choices=ROLE_CHOICES,
         default=GESTIONNAIRE,
     )
+     # ← NOUVEAU
+    photo = models.ImageField(
+        upload_to='profils/',
+        blank=True,
+        null=True,
+        verbose_name='Photo de profil'
+    )
 
     def is_gestionnaire(self):
         return self.role == self.GESTIONNAIRE

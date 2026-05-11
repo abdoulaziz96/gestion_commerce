@@ -17,6 +17,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+     'django.contrib.sites', 
+
+      # allauth
+    'allauth',                        # ← NOUVEAU
+    'allauth.account',                # ← NOUVEAU
+    'allauth.socialaccount',          # ← NOUVEAU
+    'allauth.socialaccount.providers.google',  # ← NOUVEAU
+
     # Applications du projet
     'accounts',
     'produits',
@@ -37,6 +45,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',  # ← NOUVEAU
 ]
 
 ROOT_URLCONF = 'gestion_commerce.urls'
@@ -73,6 +82,47 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
+
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',  # ← NOUVEAU
+]
+
+SITE_ID = 1
+
+
+# ── Configuration allauth ──
+ACCOUNT_LOGIN_METHODS = {'email', 'username'}   # email OU username
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = 'optional'          # 'mandatory' en production
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_USER_MODEL_USERNAME_FIELD = 'username'
+
+
+# Redirection après login/logout
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/dashboard/'
+LOGOUT_REDIRECT_URL = '/login/'
+ACCOUNT_LOGOUT_REDIRECT_URL = '/login/'
+
+# ── Email (développement — affiche dans le terminal) ──
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
+
+# ── Google OAuth ──
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': ['profile', 'email'],
+        'AUTH_PARAMS': {'access_type': 'online'},
+        'OAUTH_PKCE_ENABLED': True,
+    }
+}
+
+SOCIALACCOUNT_AUTO_SIGNUP = True
+SOCIALACCOUNT_LOGIN_ON_GET = True
 
 
 LANGUAGE_CODE = 'fr-fr'

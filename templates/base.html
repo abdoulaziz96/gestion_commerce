@@ -128,6 +128,35 @@
             .sidebar { width: 100%; height: auto; position: relative; }
             .main-content { margin-left: 0; }
         }
+
+        /* ── Mode jour ── */
+body[data-mode="light"] {
+    --sidebar-bg1: #2c1810;
+    --sidebar-bg2: #3d2314;
+    --sidebar-text: #d4b896;
+    background-color: #ffffff;
+}
+body[data-mode="light"] .main-content {
+    background-color: #f5f5f5;
+}
+body[data-mode="light"] .card {
+    background-color: #ffffff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+body[data-mode="light"] .topbar {
+    background: #ffffff;
+}
+body[data-mode="light"] .table {
+    color: #333;
+}
+
+/* ── Mode nuit ── */
+body[data-mode="dark"] {
+    --sidebar-bg1: #1a1a2e;
+    --sidebar-bg2: #16213e;
+    --sidebar-text: #a8b2c1;
+    background-color: #f8f9fa;
+}
     </style>
     {% block extra_css %}{% endblock %}
 </head>
@@ -240,28 +269,23 @@
 
         </ul>
 
-        <!-- ── Bas de sidebar : Thème + Profil ── -->
-        <div style="margin-top: auto; padding-top: 12px;">
-            <hr style="border-color: rgba(255,255,255,0.1); margin-bottom: 10px;">
-
-            <!-- Sélecteur de thème -->
-            <div class="px-3 mb-2">
-                <small style="color: var(--sidebar-text); font-size: 0.7rem;">
-                    <i class="bi bi-palette me-1"></i>THÈME
-                </small>
-                <div class="d-flex gap-2 mt-1 flex-wrap">
-                    <div class="theme-btn" style="background:#1a1a2e;"
-                         onclick="setTheme('dark')" title="Sombre"></div>
-                    <div class="theme-btn" style="background:#0d47a1;"
-                         onclick="setTheme('blue')" title="Bleu"></div>
-                    <div class="theme-btn" style="background:#1b5e20;"
-                         onclick="setTheme('green')" title="Vert"></div>
-                    <div class="theme-btn" style="background:#4a148c;"
-                         onclick="setTheme('purple')" title="Violet"></div>
-                    <div class="theme-btn" style="background:#b71c1c;"
-                         onclick="setTheme('red')" title="Rouge"></div>
-                </div>
-            </div>
+       <!-- ── Mode jour / nuit ── -->
+<div class="px-3 mb-2">
+    <button onclick="toggleMode()" id="modeBtn"
+            style="display:flex; align-items:center; gap:8px;
+                   background: rgba(255,255,255,0.08);
+                   color: var(--sidebar-text);
+                   border: 1px solid rgba(255,255,255,0.15);
+                   border-radius: 8px;
+                   padding: 7px 14px;
+                   width: 100%;
+                   cursor: pointer;
+                   font-size: 0.8rem;
+                   transition: all 0.2s;">
+        <i class="bi bi-moon-stars-fill" id="modeIcon"></i>
+        <span id="modeLabel">Mode nuit</span>
+    </button>
+</div>
 
             <!-- Profil -->
             <a href="{% url 'accounts:profil' %}" class="nav-link" style="color: var(--sidebar-text);">
@@ -273,7 +297,12 @@
                     {% else %}bg-primary{% endif %}">
                     {{ user.get_role_display }}
                 </span>
-            </a>
+                </a>
+                            <!-- 🔴 BOUTON DÉCONNEXION -->
+                <a href="{% url 'accounts:logout' %}" class="btn-deconnexion">
+                    <i class="bi bi-box-arrow-left fs-5"></i>
+                    Se déconnecter
+                </a>
         </div>
 
     </nav>
@@ -310,14 +339,34 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-// ── Thème ──
-function setTheme(theme) {
-    document.body.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
+// ── Mode jour / nuit ──
+function toggleMode() {
+    const body  = document.body;
+    const icon  = document.getElementById('modeIcon');
+    const label = document.getElementById('modeLabel');
+
+    if (body.getAttribute('data-mode') === 'light') {
+        body.setAttribute('data-mode', 'dark');
+        icon.className  = 'bi bi-moon-stars-fill';
+        label.textContent = 'Mode nuit';
+        localStorage.setItem('mode', 'dark');
+    } else {
+        body.setAttribute('data-mode', 'light');
+        icon.className  = 'bi bi-sun-fill';
+        label.textContent = 'Mode jour';
+        localStorage.setItem('mode', 'light');
+    }
 }
-// Charger le thème sauvegardé
-const savedTheme = localStorage.getItem('theme') || 'dark';
-setTheme(savedTheme);
+
+// Charger le mode sauvegardé
+const savedMode = localStorage.getItem('mode') || 'dark';
+document.body.setAttribute('data-mode', savedMode);
+if (savedMode === 'light') {
+    const icon  = document.getElementById('modeIcon');
+    const label = document.getElementById('modeLabel');
+    if (icon)  icon.className   = 'bi bi-sun-fill';
+    if (label) label.textContent = 'Mode jour';
+}
 
 // ── Sync indicator ──
 function checkSync() {
