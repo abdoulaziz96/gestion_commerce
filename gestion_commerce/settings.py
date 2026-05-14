@@ -68,12 +68,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'gestion_commerce.wsgi.application'
 
-DATABASE_URL = os.getenv('DATABASE_URL')
+import dj_database_url
+
+DATABASE_URL = os.environ.get('DATABASE_URL')  # ← os.environ pas os.getenv
 if DATABASE_URL:
     DATABASES = {
         'default': dj_database_url.config(
             default=DATABASE_URL,
-            conn_max_age=600
+            conn_max_age=600,
+            ssl_require=True
         )
     }
 else:
@@ -93,20 +96,12 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',  # ← NOUVEAU
+    'django.contrib.auth.backends.ModelBackend', # ← NOUVEAU
 ]
 
 SITE_ID = 1
 
 
-# ── Configuration allauth ──
-ACCOUNT_LOGIN_METHODS = {'email', 'username'}   # email OU username
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = 'optional'          # 'mandatory' en production
-ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
-ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_USER_MODEL_USERNAME_FIELD = 'username'
 
 
 # Redirection après login/logout
