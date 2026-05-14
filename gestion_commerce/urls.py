@@ -13,6 +13,7 @@ urlpatterns = [
     path('', lambda r: redirect('dashboard:index'), name='home'),
     path('admin/', admin.site.urls),
     path('', include('accounts.urls')),
+     path('accounts/', include('django.contrib.auth.urls')),
     path('', include('dashboard.urls')),
     path('produits/', include('produits.urls')),
     path('ventes/', include('ventes.urls')),

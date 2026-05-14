@@ -1,1 +1,1 @@
-web: gunicorn gestion_commerce.wsgi:application --bind 0.0.0.0:$PORT
+web: python manage.py migrate && gunicorn gestion_commerce.wsgi:application --bind 0.0.0.0:$PORT
