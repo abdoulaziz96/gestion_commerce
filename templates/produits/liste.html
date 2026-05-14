@@ -3,12 +3,46 @@
 {% block page_title %}Gestion des Produits{% endblock %}
 
 {% block content %}
-<!-- Barre de recherche & filtres -->
+
+<!-- Onglets -->
+<ul class="nav nav-tabs mb-4">
+    <li class="nav-item">
+        <a class="nav-link {% if onglet == 'produits' %}active fw-semibold{% endif %}"
+           href="?onglet=produits">
+            <i class="bi bi-box-seam me-1"></i>
+            Produits
+            <span class="badge bg-secondary ms-1">{{ produits|length }}</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if onglet == 'categories' %}active fw-semibold{% endif %}"
+           href="?onglet=categories">
+            <i class="bi bi-tags me-1"></i>
+            Catégories
+            <span class="badge bg-secondary ms-1">{{ categories|length }}</span>
+        </a>
+    </li>
+</ul>
+
+{% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    {% endfor %}
+{% endif %}
+
+<!-- ══ ONGLET PRODUITS ══ -->
+{% if onglet == 'produits' %}
+
 <div class="card mb-3 p-3">
     <form method="get" class="row g-2 align-items-end">
-        <div class="col-md-5">
+        <input type="hidden" name="onglet" value="produits">
+        <div class="col-md-4">
             <input type="text" name="q" class="form-control"
-                   placeholder="Rechercher un produit..." value="{{ query }}">
+                   placeholder="Rechercher un produit..."
+                   value="{{ query }}">
         </div>
         <div class="col-md-3">
             <select name="categorie" class="form-select">
@@ -20,35 +54,36 @@
         </div>
         <div class="col-md-2">
             <div class="form-check mt-2">
-                <input class="form-check-input" type="checkbox" name="alerte" value="1">
-                <label class="form-check-label">Alertes seulement</label>
+                <input class="form-check-input" type="checkbox"
+                       name="alerte" value="1"
+                       {% if request.GET.alerte %}checked{% endif %}>
+                <label class="form-check-label small">Alertes seulement</label>
             </div>
         </div>
-        <div class="col-md-2 d-flex gap-2">
+        <div class="col-md-3 d-flex gap-2">
             <button type="submit" class="btn btn-primary flex-grow-1">
                 <i class="bi bi-search"></i>
             </button>
             <a href="{% url 'produits:ajouter' %}" class="btn btn-success flex-grow-1">
-                <i class="bi bi-plus-lg">Ajouter</i>
+                <i class="bi bi-plus-lg"></i> Ajouter
             </a>
         </div>
     </form>
 </div>
 
-<!-- Tableau des produits -->
 <div class="card">
     <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">
             <thead class="table-dark">
                 <tr>
-                    <th>Image</th>
+                    <th style="width:60px">Image</th>
                     <th>Produit</th>
                     <th>Catégorie</th>
                     <th>Prix achat</th>
                     <th>Prix vente</th>
                     <th>Stock</th>
                     <th>Marge</th>
-                    <th>Actions</th>
+                    <th style="width:100px">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -57,7 +92,7 @@
                 <td>
                     {% if p.image %}
                     <img src="{{ p.image.url }}" width="45" height="45"
-                         style="object-fit:cover; border-radius:8px;">
+                         style="object-fit:cover;border-radius:8px;">
                     {% else %}
                     <div class="bg-light d-flex align-items-center justify-content-center"
                          style="width:45px;height:45px;border-radius:8px;">
@@ -69,18 +104,27 @@
                     <div class="fw-semibold">{{ p.nom }}</div>
                     <small class="text-muted">{{ p.description|truncatechars:40 }}</small>
                 </td>
-                <td><span class="badge bg-secondary">{{ p.categorie.nom }}</span></td>
+                <td>
+                    <span class="badge bg-secondary">{{ p.categorie.nom }}</span>
+                </td>
                 <td>{{ p.prix_achat|floatformat:0 }} FCFA</td>
                 <td>{{ p.prix_vente|floatformat:0 }} FCFA</td>
                 <td>
-                    {{ p.quantite_stock }}
+                    <span class="fw-bold
+                        {% if p.quantite_stock == 0 %}text-danger
+                        {% elif p.en_alerte %}text-warning
+                        {% else %}text-success{% endif %}">
+                        {{ p.quantite_stock }}
+                    </span>
                     {% if p.en_alerte %}
                     <span class="badge bg-danger ms-1">
-                        <i class="bi bi-exclamation-triangle"></i> Alerte
+                        <i class="bi bi-exclamation-triangle"></i>
                     </span>
                     {% endif %}
                 </td>
-                <td class="text-success fw-semibold">{{ p.marge|floatformat:0 }} FCFA</td>
+                <td class="text-success fw-semibold">
+                    {{ p.marge|floatformat:0 }} FCFA
+                </td>
                 <td>
                     <a href="{% url 'produits:modifier' p.pk %}"
                        class="btn btn-sm btn-outline-primary me-1">
@@ -94,7 +138,7 @@
             </tr>
             {% empty %}
             <tr>
-                <td colspan="8" class="text-center text-muted py-4">
+                <td colspan="8" class="text-center text-muted py-5">
                     <i class="bi bi-inbox fs-2 d-block mb-2"></i>
                     Aucun produit trouvé.
                     <a href="{% url 'produits:ajouter' %}">Ajouter le premier</a>
@@ -105,4 +149,112 @@
         </table>
     </div>
 </div>
+
+<!-- ══ ONGLET CATÉGORIES ══ -->
+{% elif onglet == 'categories' %}
+
+<div class="row g-4">
+
+    <!-- Formulaire ajout -->
+    <div class="col-md-4">
+        <div class="card p-4">
+            <h6 class="fw-bold mb-4">
+                <i class="bi bi-plus-circle me-2 text-success"></i>
+                Nouvelle catégorie
+            </h6>
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Nom *</label>
+                    {{ cat_form.nom }}
+                    {% if cat_form.nom.errors %}
+                    <div class="text-danger small mt-1">{{ cat_form.nom.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">Description</label>
+                    {{ cat_form.description }}
+                </div>
+                <button type="submit" name="ajouter_categorie"
+                        class="btn btn-success w-100">
+                    <i class="bi bi-plus-lg me-1"></i>Ajouter
+                </button>
+            </form>
+
+            <hr class="my-4">
+
+            <div class="alert alert-info py-2 small mb-0">
+                <i class="bi bi-info-circle me-1"></i>
+                Une catégorie avec des produits ne peut pas être supprimée.
+            </div>
+        </div>
+    </div>
+
+    <!-- Liste des catégories -->
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header fw-bold d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-tags me-2"></i>Liste des catégories</span>
+                <span class="badge bg-primary">{{ categories|length }}</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Catégorie</th>
+                            <th>Description</th>
+                            <th class="text-center">Produits</th>
+                            <th class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for c in categories %}
+                    <tr>
+                        <td class="fw-semibold">{{ c.nom }}</td>
+                        <td class="text-muted small">
+                            {{ c.description|truncatechars:50|default:"—" }}
+                        </td>
+                        <td class="text-center">
+                            {% with nb=c.produits.count %}
+                            <span class="badge {% if nb == 0 %}bg-secondary{% else %}bg-primary{% endif %}">
+                                {{ nb }} produit{{ nb|pluralize }}
+                            </span>
+                            {% endwith %}
+                        </td>
+                        <td class="text-center">
+                            {% if c.produits.count == 0 %}
+                            <form method="post" style="display:inline;"
+                                  onsubmit="return confirm('Supprimer {{ c.nom }} ?')">
+                                {% csrf_token %}
+                                <input type="hidden" name="cat_id" value="{{ c.pk }}">
+                                <button type="submit" name="supprimer_categorie"
+                                        class="btn btn-sm btn-outline-danger">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                            {% else %}
+                            <button class="btn btn-sm btn-outline-secondary"
+                                    disabled title="Contient des produits">
+                                <i class="bi bi-lock"></i>
+                            </button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center text-muted py-4">
+                            <i class="bi bi-tags fs-2 d-block mb-2"></i>
+                            Aucune catégorie. Créez-en une à gauche.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endif %}
+
 {% endblock %}
