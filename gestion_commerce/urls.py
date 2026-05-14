@@ -12,7 +12,6 @@ admin.site.index_title = "Tableau de bord administrateur"
 urlpatterns = [
     path('', lambda r: redirect('dashboard:index'), name='home'),
     path('admin/', admin.site.urls),
-     path('accounts/', include('allauth.urls')), 
     path('', include('accounts.urls')),
     path('', include('dashboard.urls')),
     path('produits/', include('produits.urls')),
