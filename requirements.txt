@@ -6,7 +6,5 @@ python-dotenv==1.0.1
 Pillow==10.4.0
 reportlab==4.2.5
 openpyxl==3.1.5
-django-allauth==65.0.1
 psycopg2-binary==2.9.10
 requests==2.32.3
-PyJWT==2.10.1
