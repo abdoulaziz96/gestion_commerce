@@ -2,6 +2,9 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 import dj_database_url
+import dj_database_url
+
+
 
 
 load_dotenv()
@@ -68,15 +71,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'gestion_commerce.wsgi.application'
 
-import dj_database_url
-
-DATABASE_URL = os.environ.get('DATABASE_URL')  # ← os.environ pas os.getenv
+DATABASE_URL = os.getenv('DATABASE_URL')
 if DATABASE_URL:
     DATABASES = {
         'default': dj_database_url.config(
             default=DATABASE_URL,
-            conn_max_age=600,
-            ssl_require=True
+            conn_max_age=0,        # ← 0 au lieu de 600 (pas de connexions persistantes)
+            ssl_require=True,
         )
     }
 else:
@@ -115,14 +116,6 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 
 
-# ── Google OAuth ──
-SOCIALACCOUNT_PROVIDERS = {
-    'google': {
-        'SCOPE': ['profile', 'email'],
-        'AUTH_PARAMS': {'access_type': 'online'},
-        'OAUTH_PKCE_ENABLED': True,
-    }
-}
 
 SOCIALACCOUNT_AUTO_SIGNUP = True
 SOCIALACCOUNT_LOGIN_ON_GET = True
