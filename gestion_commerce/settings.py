@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'rapports',
     'dashboard',
     'messagerie',
-    'sync'
+    'sync',
     'chatbot',
 ]
 
