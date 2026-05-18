@@ -3,130 +3,56 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>{% block title %}Gestion Commerce{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
+        /* ── Variables CSS améliorées ── */
+        :root {
+            --transition-default: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
         /* ── Thèmes ── */
         body[data-theme="dark"] {
             --sidebar-bg1: #1a1a2e;
             --sidebar-bg2: #16213e;
             --sidebar-text: #a8b2c1;
-            background-color: #f8f9fa;
+            --bg-main: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #212529;
         }
         body[data-theme="blue"] {
             --sidebar-bg1: #0d47a1;
             --sidebar-bg2: #1565c0;
             --sidebar-text: #bbdefb;
-            background-color: #e3f2fd;
+            --bg-main: #e3f2fd;
+            --card-bg: #ffffff;
+            --text-color: #212529;
         }
         body[data-theme="green"] {
             --sidebar-bg1: #1b5e20;
             --sidebar-bg2: #2e7d32;
             --sidebar-text: #c8e6c9;
-            background-color: #f1f8e9;
+            --bg-main: #f1f8e9;
+            --card-bg: #ffffff;
+            --text-color: #212529;
         }
         body[data-theme="purple"] {
             --sidebar-bg1: #4a148c;
             --sidebar-bg2: #6a1b9a;
             --sidebar-text: #e1bee7;
-            background-color: #f3e5f5;
+            --bg-main: #f3e5f5;
+            --card-bg: #ffffff;
+            --text-color: #212529;
         }
         body[data-theme="red"] {
             --sidebar-bg1: #b71c1c;
             --sidebar-bg2: #c62828;
             --sidebar-text: #ffcdd2;
-            background-color: #fce4ec;
-        }
-
-        body {
-            --sidebar-bg1: #1a1a2e;
-            --sidebar-bg2: #16213e;
-            --sidebar-text: #a8b2c1;
-            background-color: #f8f9fa;
-        }
-
-        .sidebar {
-            height: 100vh;
-            background: linear-gradient(180deg, var(--sidebar-bg1) 0%, var(--sidebar-bg2) 100%);
-            width: 250px;
-            position: fixed;
-            top: 0; left: 0;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-        }
-        .sidebar .nav-link {
-            color: var(--sidebar-text);
-            padding: 10px 20px;
-            border-radius: 8px;
-            margin: 2px 10px;
-            transition: all 0.2s;
-        }
-        .sidebar .nav-link:hover,
-        .sidebar .nav-link.active {
-            background: rgba(255,255,255,0.15);
-            color: #fff;
-        }
-        .sidebar .nav-link i { margin-right: 8px; }
-
-        .main-content {
-            margin-left: 250px;
-            padding: 20px;
-        }
-        .topbar {
-            background: #fff;
-            border-bottom: 1px solid #dee2e6;
-            padding: 12px 20px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-        }
-        .card {
-            border: none;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            border-radius: 12px;
-        }
-        .badge-sync {
-            font-size: 0.7rem;
-            padding: 3px 8px;
-            border-radius: 20px;
-        }
-
-        /* Boutons thème */
-        .theme-btn {
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            border: 2px solid rgba(255,255,255,0.4);
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        .theme-btn:hover { transform: scale(1.2); border-color: #fff; }
-
-        /* Bouton déconnexion fixe en haut */
-        .btn-deconnexion {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(220, 53, 69, 0.15);
-            color: #ff6b6b !important;
-            border: 1px solid rgba(220, 53, 69, 0.3);
-            border-radius: 8px;
-            padding: 8px 16px;
-            margin: 8px 10px;
-            font-weight: 600;
-            transition: all 0.2s;
-            text-decoration: none;
-        }
-        .btn-deconnexion:hover {
-            background: rgba(220, 53, 69, 0.35);
-            color: #fff !important;
-        }
-
-        @media (max-width: 768px) {
-            .sidebar { width: 100%; height: auto; position: relative; }
-            .main-content { margin-left: 0; }
+            --bg-main: #fce4ec;
+            --card-bg: #ffffff;
+            --text-color: #212529;
         }
 
         /* ── Mode jour ── */
@@ -134,20 +60,9 @@
             --sidebar-bg1: #2c1810;
             --sidebar-bg2: #3d2314;
             --sidebar-text: #d4b896;
-            background-color: #ffffff;
-        }
-        body[data-mode="light"] .main-content {
-            background-color: #f5f5f5;
-        }
-        body[data-mode="light"] .card {
-            background-color: #ffffff;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-        }
-        body[data-mode="light"] .topbar {
-            background: #ffffff;
-        }
-        body[data-mode="light"] .table {
-            color: #333;
+            --bg-main: #f5f5f5;
+            --card-bg: #ffffff;
+            --text-color: #212529;
         }
 
         /* ── Mode nuit ── */
@@ -155,19 +70,278 @@
             --sidebar-bg1: #1a1a2e;
             --sidebar-bg2: #16213e;
             --sidebar-text: #a8b2c1;
-            background-color: #f8f9fa;
+            --bg-main: #1a1a2e;
+            --card-bg: #2d2d44;
+            --text-color: #e0e0e0;
+        }
+
+        body {
+            --sidebar-bg1: #1a1a2e;
+            --sidebar-bg2: #16213e;
+            --sidebar-text: #a8b2c1;
+            --bg-main: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #212529;
+            background-color: var(--bg-main);
+            color: var(--text-color);
+            transition: var(--transition-default);
+        }
+
+        /* ── Sidebar responsive améliorée ── */
+        .sidebar {
+            height: 100vh;
+            background: linear-gradient(180deg, var(--sidebar-bg1) 0%, var(--sidebar-bg2) 100%);
+            width: 260px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            transition: var(--transition-default);
+            z-index: 1030;
+            box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+        }
+
+        /* Menu hamburger pour mobile */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 1040;
+            background: var(--sidebar-bg1);
+            border: none;
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 8px;
+            font-size: 1.3rem;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .sidebar .nav-link {
+            color: var(--sidebar-text);
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin: 2px 10px;
+            transition: var(--transition-default);
+            font-size: 0.95rem;
+        }
+
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+            transform: translateX(5px);
+        }
+
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 20px;
+            transition: var(--transition-default);
+            min-height: 100vh;
+        }
+
+        .topbar {
+            background: var(--card-bg);
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            border-radius: 12px;
+            transition: var(--transition-default);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border-radius: 12px;
+            transition: var(--transition-default);
+            margin-bottom: 20px;
+        }
+
+        .badge-sync {
+            font-size: 0.75rem;
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+
+        /* Boutons thème */
+        .theme-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.4);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .theme-btn:hover { transform: scale(1.15); border-color: #fff; }
+
+        /* Bouton déconnexion amélioré */
+        .btn-deconnexion {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(220, 53, 69, 0.12);
+            color: #ff6b6b !important;
+            border: 1px solid rgba(220, 53, 69, 0.3);
+            border-radius: 10px;
+            padding: 10px 16px;
+            margin: 10px 12px;
+            font-weight: 600;
+            transition: var(--transition-default);
+            text-decoration: none;
+        }
+
+        .btn-deconnexion:hover {
+            background: rgba(220, 53, 69, 0.25);
+            color: #fff !important;
+            transform: translateY(-2px);
+        }
+
+        /* Responsive Design amélioré */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 15px;
+            }
+            
+            .menu-toggle {
+                display: block;
+            }
+            
+            .main-content.with-toggle {
+                padding-top: 70px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .topbar {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+            
+            .topbar .d-flex {
+                justify-content: center;
+            }
+            
+            .card {
+                margin-bottom: 15px;
+            }
+            
+            h6.fw-bold {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .main-content {
+                padding: 10px;
+            }
+            
+            .topbar {
+                padding: 12px 15px;
+            }
+            
+            .table-responsive {
+                font-size: 0.85rem;
+            }
+            
+            .btn {
+                padding: 6px 12px;
+                font-size: 0.85rem;
+            }
+        }
+
+        /* Table responsive améliorée */
+        .table-responsive-custom {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Chatbot responsive */
+        @media (max-width: 768px) {
+            .chat-window {
+                width: 90vw;
+                right: 5vw;
+                bottom: 80px;
+                height: 70vh;
+            }
+            
+            .chat-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
+        }
+
+        /* Loading spinner */
+        .spinner-sm {
+            width: 1rem;
+            height: 1rem;
+            border-width: 0.15em;
+        }
+
+        /* Améliorations accessibilité */
+        .sidebar .nav-link:focus-visible,
+        .btn-deconnexion:focus-visible,
+        .chat-btn:focus-visible {
+            outline: 2px solid var(--sidebar-text);
+            outline-offset: 2px;
+        }
+
+        /* Scrollbar personnalisée */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.05);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0,0,0,0.2);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0,0,0,0.3);
         }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
-<body data-theme="dark">
+<body data-theme="dark" data-mode="dark">
 
 {% if user.is_authenticated %}
+<!-- Menu hamburger pour mobile -->
+<button class="menu-toggle" id="menuToggle" aria-label="Menu principal">
+    <i class="bi bi-list"></i>
+</button>
+
 <div class="d-flex">
     <!-- ══ SIDEBAR ══ -->
-    <nav class="sidebar p-3">
-
-        <!-- Logo + titre -->
+    <nav class="sidebar p-3" id="sidebar">
         <div class="text-center mb-3 mt-1">
             <img src="{% static 'images/logo_ibrafrik.svg' %}"
                  alt="IBRAFRIK Decor"
@@ -177,9 +351,8 @@
             </div>
         </div>
 
-        <!-- Menu -->
+        <!-- Menu principal -->
         <ul class="nav flex-column flex-grow-1">
-
             {% if user.is_gestionnaire %}
             <li class="nav-item">
                 <a class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}"
@@ -257,7 +430,6 @@
                 </a>
             </li>
             {% endif %}
-
         </ul>
 
         <!-- ── Mode jour / nuit ── -->
@@ -267,40 +439,41 @@
                            background: rgba(255,255,255,0.08);
                            color: var(--sidebar-text);
                            border: 1px solid rgba(255,255,255,0.15);
-                           border-radius: 8px;
-                           padding: 7px 14px;
+                           border-radius: 10px;
+                           padding: 8px 14px;
                            width: 100%;
                            cursor: pointer;
-                           font-size: 0.8rem;
-                           transition: all 0.2s;">
+                           font-size: 0.85rem;
+                           transition: var(--transition-default);">
                 <i class="bi bi-moon-stars-fill" id="modeIcon"></i>
                 <span id="modeLabel">Mode nuit</span>
             </button>
         </div>
 
         <!-- Profil -->
-        <a href="{% url 'accounts:profil' %}" class="nav-link mb-2" style="color: var(--sidebar-text);">
+        <a href="{% url 'accounts:profil' %}" class="nav-link" style="color: var(--sidebar-text);">
             <i class="bi bi-person-circle"></i>
             {{ user.get_full_name|default:user.username }}
             <br>
-            <span class="badge ms-4 {% if user.is_admin_bc %}bg-warning text-dark{% else %}bg-primary{% endif %}">
+            <span class="badge mt-1
+                {% if user.is_admin_bc %}bg-warning text-dark
+                {% else %}bg-primary{% endif %}">
                 {{ user.get_role_display }}
             </span>
         </a>
-
-        <!-- 🔴 BOUTON DÉCONNEXION UNIQUE -->
-        <a href="{% url 'accounts:logout' %}" class="btn-deconnexion mb-3">
+        
+        <!-- 🔴 BOUTON DÉCONNEXION -->
+        <a href="{% url 'accounts:logout' %}" class="btn-deconnexion">
             <i class="bi bi-box-arrow-left fs-5"></i>
             Se déconnecter
         </a>
-
     </nav>
 
     <!-- ══ CONTENU PRINCIPAL ══ -->
-    <div class="main-content flex-grow-1">
-        <div class="topbar d-flex justify-content-between align-items-center">
+    <div class="main-content" id="mainContent">
+        <div class="topbar d-flex justify-content-between align-items-center flex-wrap">
             <h6 class="mb-0 fw-bold">{% block page_title %}{% endblock %}</h6>
-            <div class="d-flex align-items-center gap-3">
+            <div class="d-flex align-items-center gap-3 flex-wrap">
                 <span id="sync-indicator" class="badge badge-sync bg-secondary">
                     <i class="bi bi-arrow-repeat"></i> Sync...
                 </span>
@@ -312,7 +485,7 @@
             {% for message in messages %}
             <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
                 {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
             </div>
             {% endfor %}
         {% endif %}
@@ -328,21 +501,54 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-// ── Mode jour / nuit ──
+// ── Menu hamburger pour mobile ──
+const menuToggle = document.getElementById('menuToggle');
+const sidebar = document.getElementById('sidebar');
+const mainContent = document.getElementById('mainContent');
+
+if (menuToggle && sidebar) {
+    menuToggle.addEventListener('click', function() {
+        sidebar.classList.toggle('open');
+        const icon = menuToggle.querySelector('i');
+        if (sidebar.classList.contains('open')) {
+            icon.classList.remove('bi-list');
+            icon.classList.add('bi-x-lg');
+        } else {
+            icon.classList.remove('bi-x-lg');
+            icon.classList.add('bi-list');
+        }
+    });
+
+    // Fermer le menu quand on clique sur un lien (mobile)
+    const navLinks = sidebar.querySelectorAll('.nav-link');
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            if (window.innerWidth <= 992) {
+                sidebar.classList.remove('open');
+                const icon = menuToggle.querySelector('i');
+                icon.classList.remove('bi-x-lg');
+                icon.classList.add('bi-list');
+            }
+        });
+    });
+}
+
+// ── Mode jour / nuit amélioré ──
 function toggleMode() {
     const body  = document.body;
     const icon  = document.getElementById('modeIcon');
     const label = document.getElementById('modeLabel');
+    const currentMode = body.getAttribute('data-mode');
 
-    if (body.getAttribute('data-mode') === 'light') {
+    if (currentMode === 'light') {
         body.setAttribute('data-mode', 'dark');
-        icon.className  = 'bi bi-moon-stars-fill';
-        label.textContent = 'Mode nuit';
+        if (icon) icon.className = 'bi bi-moon-stars-fill';
+        if (label) label.textContent = 'Mode nuit';
         localStorage.setItem('mode', 'dark');
     } else {
         body.setAttribute('data-mode', 'light');
-        icon.className  = 'bi bi-sun-fill';
-        label.textContent = 'Mode jour';
+        if (icon) icon.className = 'bi bi-sun-fill';
+        if (label) label.textContent = 'Mode jour';
         localStorage.setItem('mode', 'light');
     }
 }
@@ -351,44 +557,63 @@ function toggleMode() {
 const savedMode = localStorage.getItem('mode') || 'dark';
 document.body.setAttribute('data-mode', savedMode);
 if (savedMode === 'light') {
-    const icon  = document.getElementById('modeIcon');
+    const icon = document.getElementById('modeIcon');
     const label = document.getElementById('modeLabel');
-    if (icon)   icon.className   = 'bi bi-sun-fill';
+    if (icon) icon.className = 'bi bi-sun-fill';
     if (label) label.textContent = 'Mode jour';
 }
 
-// ── Sync indicator ──
+// ── Sync indicator amélioré avec retry ──
 function checkSync() {
+    const el = document.getElementById('sync-indicator');
+    if (!el) return;
+    
     fetch("{% url 'sync:statut' %}")
-        .then(r => r.json())
+        .then(r => {
+            if (!r.ok) throw new Error('Network error');
+            return r.json();
+        })
         .then(data => {
-            const el = document.getElementById('sync-indicator');
-            if (!el) return;
             if (data.synced) {
                 el.className = 'badge badge-sync bg-success';
                 el.innerHTML = '<i class="bi bi-check-circle"></i> Synchro';
             } else {
                 el.className = 'badge badge-sync bg-warning text-dark';
-                el.innerHTML = `<i class="bi bi-arrow-repeat"></i> ${data.non_synced || ''} en attente`;
+                el.innerHTML = `<i class="bi bi-arrow-repeat"></i> ${data.non_synced || 0} en attente`;
             }
         })
         .catch(() => {
-            const el = document.getElementById('sync-indicator');
-            if (el) {
-                el.className = 'badge badge-sync bg-danger';
-                el.innerHTML = '<i class="bi bi-wifi-off"></i> Hors ligne';
-            }
+            el.className = 'badge badge-sync bg-danger';
+            el.innerHTML = '<i class="bi bi-wifi-off"></i> Hors ligne';
         });
 }
+
 {% if user.is_authenticated %}
 checkSync();
 setInterval(checkSync, 30000);
 {% endif %}
+
+// ── Gestion du redimensionnement ──
+let resizeTimeout;
+window.addEventListener('resize', function() {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(function() {
+        if (window.innerWidth > 992 && sidebar.classList.contains('open')) {
+            sidebar.classList.remove('open');
+            const icon = menuToggle?.querySelector('i');
+            if (icon) {
+                icon.classList.remove('bi-x-lg');
+                icon.classList.add('bi-list');
+            }
+        }
+    }, 250);
+});
 </script>
 
 {% block extra_js %}{% endblock %}
+
 {% if user.is_authenticated %}
-<!-- ── IBRA Chatbot ── -->
+<!-- ── IBRA Chatbot amélioré ── -->
 <style>
 .chat-bubble {
     position: fixed;
@@ -406,23 +631,27 @@ setInterval(checkSync, 30000);
     font-size: 1.5rem;
     cursor: pointer;
     box-shadow: 0 4px 20px rgba(139,69,19,0.4);
-    transition: transform 0.2s;
+    transition: transform 0.2s, box-shadow 0.2s;
 }
-.chat-btn:hover { transform: scale(1.1); }
+.chat-btn:hover { 
+    transform: scale(1.1);
+    box-shadow: 0 6px 25px rgba(139,69,19,0.5);
+}
 
 .chat-window {
     display: none;
     position: fixed;
     bottom: 90px;
     right: 24px;
-    width: 360px;
-    height: 480px;
-    background: var(--bs-white, #fff);
+    width: 380px;
+    height: 500px;
+    background: var(--card-bg, #fff);
     border-radius: 16px;
     box-shadow: 0 8px 40px rgba(0,0,0,0.2);
     flex-direction: column;
     z-index: 9999;
     overflow: hidden;
+    transition: var(--transition-default);
 }
 .chat-window.open { display: flex; }
 
@@ -439,6 +668,11 @@ setInterval(checkSync, 30000);
     width: 8px; height: 8px;
     background: #4ade80;
     border-radius: 50%;
+    animation: pulse 1.5s infinite;
+}
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
 }
 .chat-messages {
     flex: 1;
@@ -447,7 +681,7 @@ setInterval(checkSync, 30000);
     display: flex;
     flex-direction: column;
     gap: 10px;
-    background: #f8f5f0;
+    background: var(--bg-main, #f8f5f0);
 }
 .msg {
     max-width: 85%;
@@ -455,9 +689,10 @@ setInterval(checkSync, 30000);
     border-radius: 14px;
     font-size: 0.88rem;
     line-height: 1.5;
+    word-wrap: break-word;
 }
 .msg.bot {
-    background: #fff;
+    background: var(--card-bg, #fff);
     border: 0.5px solid #e5d5c0;
     align-self: flex-start;
     border-bottom-left-radius: 4px;
@@ -468,13 +703,31 @@ setInterval(checkSync, 30000);
     align-self: flex-end;
     border-bottom-right-radius: 4px;
 }
-.msg.loading { color: #999; font-style: italic; }
+.msg.loading { 
+    color: #999; 
+    font-style: italic;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.msg.loading::before {
+    content: '';
+    width: 16px;
+    height: 16px;
+    border: 2px solid #ddd;
+    border-top-color: #8B4513;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
 .chat-input-area {
     display: flex;
     gap: 8px;
     padding: 12px;
-    background: #fff;
-    border-top: 1px solid #f0e8dc;
+    background: var(--card-bg, #fff);
+    border-top: 1px solid rgba(0,0,0,0.1);
 }
 .chat-input-area input {
     flex: 1;
@@ -483,6 +736,8 @@ setInterval(checkSync, 30000);
     padding: 8px 14px;
     font-size: 0.88rem;
     outline: none;
+    background: var(--bg-main, #fff);
+    color: var(--text-color, #333);
 }
 .chat-input-area input:focus { border-color: #DAA520; }
 .chat-send {
@@ -494,6 +749,17 @@ setInterval(checkSync, 30000);
     color: #fff;
     cursor: pointer;
     font-size: 0.9rem;
+    transition: transform 0.2s;
+}
+.chat-send:hover { transform: scale(1.05); }
+
+@media (max-width: 768px) {
+    .chat-window {
+        width: calc(100vw - 40px);
+        right: 20px;
+        height: 60vh;
+        bottom: 80px;
+    }
 }
 </style>
 
@@ -504,7 +770,7 @@ setInterval(checkSync, 30000);
             <span class="dot"></span>
             <span>IBRA — Assistant IBRAFRIK Decor</span>
             <button onclick="toggleChat()"
-                    style="margin-left:auto;background:none;border:none;color:#fff;font-size:1.1rem;">
+                    style="margin-left:auto;background:none;border:none;color:#fff;font-size:1.1rem;cursor:pointer;">
                 <i class="bi bi-x-lg"></i>
             </button>
         </div>
@@ -533,29 +799,46 @@ setInterval(checkSync, 30000);
 <script>
 let chatHistorique = [];
 let chatOuvert = false;
+let isLoading = false;
 
 function toggleChat() {
     chatOuvert = !chatOuvert;
-    document.getElementById('chatWindow').classList.toggle('open', chatOuvert);
-    if (chatOuvert) document.getElementById('chatInput').focus();
+    const chatWindow = document.getElementById('chatWindow');
+    if (chatWindow) {
+        chatWindow.classList.toggle('open', chatOuvert);
+    }
+    if (chatOuvert) {
+        const input = document.getElementById('chatInput');
+        if (input) input.focus();
+    }
 }
 
-function ajouterMessage(contenu, role) {
+function ajouterMessage(contenu, role, isHtml = false) {
+    const messagesDiv = document.getElementById('chatMessages');
+    if (!messagesDiv) return null;
+    
     const div = document.createElement('div');
     div.className = `msg ${role}`;
-    div.innerHTML = contenu.replace(/\n/g, '<br>');
-    document.getElementById('chatMessages').appendChild(div);
-    document.getElementById('chatMessages').scrollTop = 99999;
+    if (isHtml) {
+        div.innerHTML = contenu;
+    } else {
+        div.innerHTML = contenu.replace(/\n/g, '<br>');
+    }
+    messagesDiv.appendChild(div);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
     return div;
 }
 
 async function sendMessage() {
+    if (isLoading) return;
+    
     const input = document.getElementById('chatInput');
     const message = input.value.trim();
     if (!message) return;
 
     input.value = '';
     ajouterMessage(message, 'user');
+    isLoading = true;
 
     const loading = ajouterMessage('IBRA réfléchit...', 'bot loading');
 
@@ -568,24 +851,29 @@ async function sendMessage() {
             },
             body: JSON.stringify({
                 message: message,
-                historique: chatHistorique,
+                historique: chatHistorique.slice(-10), // Envoyer seulement les 10 derniers
             }),
         });
 
+        if (!response.ok) throw new Error('Erreur serveur');
+        
         const data = await response.json();
         loading.remove();
         ajouterMessage(data.reponse, 'bot');
 
         // Mémoriser l'échange
-        chatHistorique.push({ role: 'user',  content: message });
+        chatHistorique.push({ role: 'user', content: message });
         chatHistorique.push({ role: 'model', content: data.reponse });
 
-        // Garder seulement les 20 derniers
+        // Garder seulement les 20 derniers échanges
         if (chatHistorique.length > 20) chatHistorique = chatHistorique.slice(-20);
 
     } catch (err) {
+        console.error('Chat error:', err);
         loading.remove();
-        ajouterMessage('Erreur de connexion. Réessayez.', 'bot');
+        ajouterMessage('Désolé, une erreur de connexion est survenue. Veuillez réessayer.', 'bot');
+    } finally {
+        isLoading = false;
     }
 }
 </script>
