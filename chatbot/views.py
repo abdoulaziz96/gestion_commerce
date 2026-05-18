@@ -164,7 +164,7 @@ def chatbot_query(request):
 
         # Appel API Gemini
         response = client.models.generate_content(
-            model='gemini-2.0-flash',
+            model='gemini-1.5-flash',
             config=types.GenerateContentConfig(
                 system_instruction=construire_prompt_systeme(
                     request.user, donnees
