@@ -130,33 +130,33 @@
         }
 
         /* ── Mode jour ── */
-body[data-mode="light"] {
-    --sidebar-bg1: #2c1810;
-    --sidebar-bg2: #3d2314;
-    --sidebar-text: #d4b896;
-    background-color: #ffffff;
-}
-body[data-mode="light"] .main-content {
-    background-color: #f5f5f5;
-}
-body[data-mode="light"] .card {
-    background-color: #ffffff;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-}
-body[data-mode="light"] .topbar {
-    background: #ffffff;
-}
-body[data-mode="light"] .table {
-    color: #333;
-}
+        body[data-mode="light"] {
+            --sidebar-bg1: #2c1810;
+            --sidebar-bg2: #3d2314;
+            --sidebar-text: #d4b896;
+            background-color: #ffffff;
+        }
+        body[data-mode="light"] .main-content {
+            background-color: #f5f5f5;
+        }
+        body[data-mode="light"] .card {
+            background-color: #ffffff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        body[data-mode="light"] .topbar {
+            background: #ffffff;
+        }
+        body[data-mode="light"] .table {
+            color: #333;
+        }
 
-/* ── Mode nuit ── */
-body[data-mode="dark"] {
-    --sidebar-bg1: #1a1a2e;
-    --sidebar-bg2: #16213e;
-    --sidebar-text: #a8b2c1;
-    background-color: #f8f9fa;
-}
+        /* ── Mode nuit ── */
+        body[data-mode="dark"] {
+            --sidebar-bg1: #1a1a2e;
+            --sidebar-bg2: #16213e;
+            --sidebar-text: #a8b2c1;
+            background-color: #f8f9fa;
+        }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
@@ -168,16 +168,14 @@ body[data-mode="dark"] {
     <nav class="sidebar p-3">
 
         <!-- Logo + titre -->
-       <div class="text-center mb-3 mt-1">
-    {% load static %}
-    <img src="{% static 'images/logo_ibrafrik.svg' %}"
-         alt="IBRAFRIK Decor"
-         style="width: 210px; max-width: 100%; filter: brightness(1.1);">
-    <div style="color: var(--sidebar-text); font-size: 0.75rem; margin-top: 4px; letter-spacing: 1px;">
-        {{ user.get_role_display }}
-    </div>
-</div>
-
+        <div class="text-center mb-3 mt-1">
+            <img src="{% static 'images/logo_ibrafrik.svg' %}"
+                 alt="IBRAFRIK Decor"
+                 style="width: 210px; max-width: 100%; filter: brightness(1.1);">
+            <div style="color: var(--sidebar-text); font-size: 0.75rem; margin-top: 4px; letter-spacing: 1px;">
+                {{ user.get_role_display }}
+            </div>
+        </div>
 
         <!-- Menu -->
         <ul class="nav flex-column flex-grow-1">
@@ -228,13 +226,6 @@ body[data-mode="dark"] {
                     {% endif %}
                 </a>
             </li>
-             <!-- 🔴 BOUTON DÉCONNEXION EN HAUT -->
-        <a href="{% url 'accounts:logout' %}" class="btn-deconnexion">
-            <i class="bi bi-box-arrow-left fs-5"></i>
-            Se déconnecter
-        </a>
-
-        <hr style="border-color: rgba(255,255,255,0.1); margin: 8px 0;">
             {% endif %}
 
             {% if user.is_admin_bc %}
@@ -269,41 +260,39 @@ body[data-mode="dark"] {
 
         </ul>
 
-       <!-- ── Mode jour / nuit ── -->
-<div class="px-3 mb-2">
-    <button onclick="toggleMode()" id="modeBtn"
-            style="display:flex; align-items:center; gap:8px;
-                   background: rgba(255,255,255,0.08);
-                   color: var(--sidebar-text);
-                   border: 1px solid rgba(255,255,255,0.15);
-                   border-radius: 8px;
-                   padding: 7px 14px;
-                   width: 100%;
-                   cursor: pointer;
-                   font-size: 0.8rem;
-                   transition: all 0.2s;">
-        <i class="bi bi-moon-stars-fill" id="modeIcon"></i>
-        <span id="modeLabel">Mode nuit</span>
-    </button>
-</div>
-
-            <!-- Profil -->
-            <a href="{% url 'accounts:profil' %}" class="nav-link" style="color: var(--sidebar-text);">
-                <i class="bi bi-person-circle"></i>
-                {{ user.get_full_name|default:user.username }}
-                <br>
-                <span class="badge ms-4
-                    {% if user.is_admin_bc %}bg-warning text-dark
-                    {% else %}bg-primary{% endif %}">
-                    {{ user.get_role_display }}
-                </span>
-                </a>
-                            <!-- 🔴 BOUTON DÉCONNEXION -->
-                <a href="{% url 'accounts:logout' %}" class="btn-deconnexion">
-                    <i class="bi bi-box-arrow-left fs-5"></i>
-                    Se déconnecter
-                </a>
+        <!-- ── Mode jour / nuit ── -->
+        <div class="px-3 mb-2">
+            <button onclick="toggleMode()" id="modeBtn"
+                    style="display:flex; align-items:center; gap:8px;
+                           background: rgba(255,255,255,0.08);
+                           color: var(--sidebar-text);
+                           border: 1px solid rgba(255,255,255,0.15);
+                           border-radius: 8px;
+                           padding: 7px 14px;
+                           width: 100%;
+                           cursor: pointer;
+                           font-size: 0.8rem;
+                           transition: all 0.2s;">
+                <i class="bi bi-moon-stars-fill" id="modeIcon"></i>
+                <span id="modeLabel">Mode nuit</span>
+            </button>
         </div>
+
+        <!-- Profil -->
+        <a href="{% url 'accounts:profil' %}" class="nav-link mb-2" style="color: var(--sidebar-text);">
+            <i class="bi bi-person-circle"></i>
+            {{ user.get_full_name|default:user.username }}
+            <br>
+            <span class="badge ms-4 {% if user.is_admin_bc %}bg-warning text-dark{% else %}bg-primary{% endif %}">
+                {{ user.get_role_display }}
+            </span>
+        </a>
+
+        <!-- 🔴 BOUTON DÉCONNEXION UNIQUE -->
+        <a href="{% url 'accounts:logout' %}" class="btn-deconnexion mb-3">
+            <i class="bi bi-box-arrow-left fs-5"></i>
+            Se déconnecter
+        </a>
 
     </nav>
 
@@ -364,7 +353,7 @@ document.body.setAttribute('data-mode', savedMode);
 if (savedMode === 'light') {
     const icon  = document.getElementById('modeIcon');
     const label = document.getElementById('modeLabel');
-    if (icon)  icon.className   = 'bi bi-sun-fill';
+    if (icon)   icon.className   = 'bi bi-sun-fill';
     if (label) label.textContent = 'Mode jour';
 }
 
@@ -522,7 +511,7 @@ setInterval(checkSync, 30000);
         <div class="chat-messages" id="chatMessages">
             <div class="msg bot">
                 Bonjour <strong>{{ user.first_name|default:user.username }}</strong> ! 👋<br>
-                Je suis  votre assistant IBRAFRIK Decor. Je peux vous aider avec
+                Je suis votre assistant IBRAFRIK Decor. Je peux vous aider avec
                 les données de la boutique ou l'utilisation de l'application.<br><br>
                 Que puis-je faire pour vous ?
             </div>
