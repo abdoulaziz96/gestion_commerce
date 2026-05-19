@@ -554,7 +554,7 @@ function toggleMode() {
 }
 
 // Charger le mode sauvegardé
-const savedMode = localStorage.getItem('mode') || 'dark';
+const savedMode = localStorage.getItem('mode') || 'light';
 document.body.setAttribute('data-mode', savedMode);
 if (savedMode === 'light') {
     const icon = document.getElementById('modeIcon');
