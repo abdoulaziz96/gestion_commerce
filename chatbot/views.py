@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
-from openai import OpenAI
+from groq import Groq
 
 
 def get_donnees_boutique(user):
@@ -313,16 +313,18 @@ def chatbot_query(request):
         if not message:
             return JsonResponse({'error': 'Message vide'}, status=400)
 
-        # Clé API
-        api_key = os.getenv('OPENAI_API_KEY')
+        # Configuration Groq
+        api_key = os.getenv('GROQ_API_KEY')
         if not api_key:
-            return JsonResponse({'error': 'Clé API OpenAI non configurée'}, status=500)
+            return JsonResponse({
+                'reponse': '❌ Clé API Groq non configurée. Obtenez-en une gratuitement sur https://console.groq.com'
+            }, status=200)
 
         # Données boutique en temps réel
         donnees = get_donnees_boutique(request.user)
 
-        # Client OpenAI
-        client = OpenAI(api_key=api_key)
+        # Client Groq
+        client = Groq(api_key=api_key)
 
         # Construire l'historique des messages
         messages = [
@@ -344,9 +346,9 @@ def chatbot_query(request):
             'content': message
         })
 
-        # ✅ Appel à OpenAI avec gpt-4o-mini (stable et performant)
+        # ✅ Appel à Groq (gratuit, ultra-rapide, pas de quota)
         response = client.chat.completions.create(
-            model='gpt-4o-mini',
+            model='mixtral-8x7b-32768',  # Modèle gratuit et performant
             messages=messages,
             max_tokens=500,
             temperature=0.7,
@@ -357,6 +359,7 @@ def chatbot_query(request):
         return JsonResponse({
             'reponse': reponse_text,
             'donnees': donnees,
+            'model': 'mixtral-8x7b-32768'
         })
 
     except Exception as e:
