@@ -275,13 +275,4 @@ def chatbot_query(request):
         })
 
     except Exception as e:
-        err = str(e)
-        if '401' in err or 'authentication' in err.lower():
-            msg = '❌ Clé API invalide. Vérifiez ANTHROPIC_API_KEY.'
-        elif '429' in err:
-            msg = '⚠️ Trop de requêtes. Réessayez dans quelques secondes.'
-        elif '529' in err or 'overloaded' in err.lower():
-            msg = '⚠️ Service temporairement surchargé. Réessayez dans un instant.'
-        else:
-            msg = '⚠️ Erreur temporaire. Réessayez dans un instant.'
-        return JsonResponse({'reponse': msg}, status=200)
+        return JsonResponse({'reponse': f'ERREUR EXACTE : {str(e)}'}, status=200)
