@@ -147,7 +147,13 @@ def chatbot_query(request):
         client = OpenAI(api_key=api_key)
 
         # Construire l'historique des messages
-        messages = []
+        messages = [
+            {
+                'role': 'system',
+                'content': construire_prompt_systeme(request.user, donnees)
+            }
+        ]
+        
         for msg in historique[-10:]:  # 10 derniers messages max
             messages.append({
                 'role': msg['role'],
@@ -164,9 +170,6 @@ def chatbot_query(request):
         response = client.chat.completions.create(
             model='gpt-4o-mini',
             messages=messages,
-            system=construire_prompt_systeme(
-                request.user, donnees
-            ),
             max_tokens=500,
             temperature=0.7,
         )
