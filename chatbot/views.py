@@ -162,9 +162,9 @@ def chatbot_query(request):
             parts=[types.Part(text=message)]
         ))
 
-        # ✅ CORRECTION ICI - modèle 'gemini-1.5-pro' au lieu de 'gemini-1.5-flash'
+        # ✅ Utilisation du modèle 'gemini-1.5-flash' (disponible et optimisé)
         response = client.models.generate_content(
-            model='gemini-1.5-pro',  # 🔑 Correction : flash n'existe pas, pro est valide
+            model='gemini-1.5-flash',  # ✅ Modèle disponible pour generateContent
             config=types.GenerateContentConfig(
                 system_instruction=construire_prompt_systeme(
                     request.user, donnees
