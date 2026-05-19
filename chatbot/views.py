@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
-from anthropic import Anthropic
+from groq import Groq
 
 
 def get_donnees_boutique(user):
@@ -14,10 +14,10 @@ def get_donnees_boutique(user):
     from django.db.models import Sum
     from datetime import timedelta
 
-    aujourd_hui = timezone.now().date()
-    debut_mois  = aujourd_hui.replace(day=1)
-    semaine_debut        = aujourd_hui - timedelta(days=7)
-    semaine_avant_debut  = semaine_debut - timedelta(days=7)
+    aujourd_hui         = timezone.now().date()
+    debut_mois          = aujourd_hui.replace(day=1)
+    semaine_debut       = aujourd_hui - timedelta(days=7)
+    semaine_avant_debut = semaine_debut - timedelta(days=7)
 
     produits_actifs = Produit.objects.filter(actif=True)
     produits_alerte = [p for p in produits_actifs if p.en_alerte]
@@ -52,7 +52,6 @@ def get_donnees_boutique(user):
         derniere_vente = Vente.objects.filter(
             annulee=False
         ).order_by('-date_vente').first()
-
         derniere_vente_info = (
             f"{derniere_vente.gestionnaire.get_full_name()} "
             f"le {derniere_vente.date_vente.strftime('%d/%m à %H:%M')}"
@@ -98,7 +97,6 @@ def get_donnees_boutique(user):
         derniere_vente = Vente.objects.filter(
             gestionnaire=user, annulee=False
         ).order_by('-date_vente').first()
-
         derniere_vente_info = (
             f"le {derniere_vente.date_vente.strftime('%d/%m à %H:%M')}"
         ) if derniere_vente else "Aucune vente enregistrée"
@@ -115,19 +113,19 @@ def get_donnees_boutique(user):
     ]
 
     return {
-        'ca_jour':            float(ca_jour),
-        'ca_mois':            float(ca_mois),
-        'ca_semaine':         float(ca_semaine),
+        'ca_jour':             float(ca_jour),
+        'ca_mois':             float(ca_mois),
+        'ca_semaine':          float(ca_semaine),
         'ca_semaine_derniere': float(ca_semaine_derniere),
-        'evolution_semaine':  evolution,
-        'depenses_mois':      float(depenses_mois),
-        'benefice_net':       float(ca_mois) - float(depenses_mois),
-        'nb_ventes_mois':     nb_ventes,
-        'nb_produits_alerte': len(produits_alerte),
-        'produits_alerte':    details_alertes,
-        'derniere_vente':     derniere_vente_info,
-        'date':               aujourd_hui.strftime('%d/%m/%Y'),
-        'mois':               aujourd_hui.strftime('%B %Y'),
+        'evolution_semaine':   evolution,
+        'depenses_mois':       float(depenses_mois),
+        'benefice_net':        float(ca_mois) - float(depenses_mois),
+        'nb_ventes_mois':      nb_ventes,
+        'nb_produits_alerte':  len(produits_alerte),
+        'produits_alerte':     details_alertes,
+        'derniere_vente':      derniere_vente_info,
+        'date':                aujourd_hui.strftime('%d/%m/%Y'),
+        'mois':                aujourd_hui.strftime('%B %Y'),
     }
 
 
@@ -139,10 +137,10 @@ def construire_prompt_systeme(user, donnees):
         else "  • Aucun produit en alerte — stock OK ✅"
     )
 
-    return f"""Tu es IBRA, l'assistant intelligent de la boutique IBRAFRIK Decor 🤖
-Spécialisée en meubles, décoration maison, électroménager et équipement GYM à Cotonou, Bénin.
+    return f"""Tu es IBRA, l'assistant intelligent de la boutique IBRAFRIK Decor.
+Spécialisée en meubles, décoration, électroménager et GYM à Malanville, Bénin.
 Tu t'adresses à {user.get_full_name() or user.username} ({role_label}).
-Réponds TOUJOURS en français, de façon concise, professionnelle et chaleureuse.
+Réponds TOUJOURS en français, de façon concise et professionnelle.
 
 === DONNÉES EN TEMPS RÉEL ({donnees['date']}) ===
 - CA aujourd'hui          : {donnees['ca_jour']:,.0f} FCFA
@@ -157,35 +155,27 @@ Réponds TOUJOURS en français, de façon concise, professionnelle et chaleureus
 {alertes_liste}
 
 === GUIDE D'UTILISATION ===
-- Ajouter produit       → /produits/ajouter/ — remplir nom, catégorie, prix, quantité
-- Modifier produit      → /produits/ → icône crayon ✏️ sur la ligne
-- Modifier prix         → /produits/ → icône crayon → changer prix achat/vente → Enregistrer
-- Enregistrer vente     → /ventes/enregistrer/ → produit, quantité, prix → Valider
-- Annuler vente         → /ventes/ → icône ❌ (stock remis automatiquement)
-- Entrée stock          → /stock/entree/ → produit + quantité reçue
-- Sortie stock          → /stock/sortie/ → pour pertes ou casses
-- Inventaire            → /stock/inventaire/ → corriger toutes les quantités
-- Rapport jour PDF      → /rapports/journalier/ → bouton PDF
-- Rapport mensuel       → /rapports/mensuel/ → choisir mois et année
-- Ajouter dépense       → /depenses/ajouter/ → libellé, catégorie, montant, date
-- Envoyer message       → /messagerie/envoyer/ → choisir destinataire
-- Changer mot de passe  → /profil/ → onglet Sécurité
-- Gérer catégories      → /produits/ → onglet Catégories
-- Mode jour/nuit        → bouton en bas de la sidebar
+- Ajouter produit       → /produits/ajouter/
+- Modifier produit/prix → /produits/ → icône crayon ✏️
+- Enregistrer vente     → /ventes/enregistrer/
+- Annuler vente         → /ventes/ → icône ❌
+- Entrée stock          → /stock/entree/
+- Sortie stock          → /stock/sortie/
+- Inventaire            → /stock/inventaire/
+- Rapport PDF           → /rapports/journalier/ → bouton PDF
+- Rapport mensuel       → /rapports/mensuel/
+- Ajouter dépense       → /depenses/ajouter/
+- Messagerie            → /messagerie/envoyer/
+- Mot de passe          → /profil/ onglet Sécurité
+- Catégories            → /produits/ onglet Catégories
 
-=== TES CAPACITÉS ===
-1. Support technique  : Guide pas à pas sur l'utilisation de l'application
-2. Analyse métier     : Chiffres en temps réel (CA, dépenses, bénéfice, comparaisons)
-3. Alertes stock      : Signaler et lister les produits en rupture
-4. Conseils proactifs : Suggérer des actions selon les données
-
-Tu ne peux PAS modifier les données directement — guide vers la bonne page."""
+Tu peux : donner les chiffres en temps réel, guider l'utilisation, signaler alertes stock.
+Tu ne modifies PAS les données — tu guides vers la bonne page."""
 
 
 @login_required
 @csrf_exempt
 def chatbot_init(request):
-    """Message de bienvenue enrichi au chargement du chatbot."""
     try:
         donnees    = get_donnees_boutique(request.user)
         role_label = "Administrateur" if request.user.role == 'ADMIN' else "Gestionnaire"
@@ -210,23 +200,17 @@ Vous êtes connecté en tant que **{role_label}**.
 ⚠️ **Alertes stock ({donnees['nb_produits_alerte']} produit(s))** :
 {alertes_liste}
 
-💬 **Je peux vous aider à :**
-- Consulter vos chiffres en temps réel
-- Guider l'utilisation de l'application
-- Identifier les produits en rupture
-- Comparer les performances semaine/mois
-
-Posez-moi vos questions ! 😊"""
+💬 Posez-moi vos questions sur les chiffres, l'utilisation de l'app ou les alertes stock ! 😊"""
 
         return JsonResponse({
-            'reponse':        salutation,
-            'donnees':        donnees,
+            'reponse':         salutation,
+            'donnees':         donnees,
             'message_initial': True,
         })
 
     except Exception as e:
         return JsonResponse({
-            'reponse': f"Bonjour ! Je suis IBRA, votre assistant. Comment puis-je vous aider ?"
+            'reponse': "Bonjour ! Je suis IBRA, votre assistant. Comment puis-je vous aider ?"
         }, status=200)
 
 
@@ -244,35 +228,51 @@ def chatbot_query(request):
         if not message:
             return JsonResponse({'error': 'Message vide'}, status=400)
 
-        api_key = os.getenv('ANTHROPIC_API_KEY')
+        api_key = os.getenv('GROQ_API_KEY')
         if not api_key:
             return JsonResponse({
-                'reponse': '❌ Clé API non configurée. Ajoutez ANTHROPIC_API_KEY dans les variables d\'environnement.'
+                'reponse': '❌ Clé API Groq non configurée. Ajoutez GROQ_API_KEY dans les variables d\'environnement.'
             }, status=200)
 
         donnees = get_donnees_boutique(request.user)
-        client  = Anthropic(api_key=api_key)
+        client  = Groq(api_key=api_key)
 
-        # Construire l'historique — format Claude (assistant, pas model)
-        messages = []
+        # Construire les messages avec le prompt système
+        messages = [
+            {
+                'role':    'system',
+                'content': construire_prompt_systeme(request.user, donnees)
+            }
+        ]
+
+        # Ajouter l'historique
         for msg in historique[-10:]:
             role = 'user' if msg['role'] == 'user' else 'assistant'
             messages.append({'role': role, 'content': msg['content']})
 
+        # Ajouter le nouveau message
         messages.append({'role': 'user', 'content': message})
 
-        # Appel Claude Haiku — rapide et économique
-        response = client.messages.create(
-            model='claude-haiku-4-5-20251001',
+        # Appel Groq
+        response = client.chat.completions.create(
+            model='llama-3.1-8b-instant',
             max_tokens=500,
-            system=construire_prompt_systeme(request.user, donnees),
             messages=messages,
         )
 
+        reponse_text = response.choices[0].message.content
+
         return JsonResponse({
-            'reponse': response.content[0].text,
+            'reponse': reponse_text,
             'donnees': donnees,
         })
 
     except Exception as e:
-        return JsonResponse({'reponse': f'ERREUR EXACTE : {str(e)}'}, status=200)
+        err = str(e)
+        if '401' in err or 'authentication' in err.lower():
+            msg = '❌ Clé API invalide. Vérifiez GROQ_API_KEY.'
+        elif '429' in err:
+            msg = '⚠️ Trop de requêtes. Réessayez dans quelques secondes.'
+        else:
+            msg = f'⚠️ Erreur : {err}'
+        return JsonResponse({'reponse': msg}, status=200)
