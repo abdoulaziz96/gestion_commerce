@@ -4,8 +4,7 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
-from google import genai
-from google.genai import types
+from openai import OpenAI
 
 
 def get_donnees_boutique(user):
@@ -137,45 +136,42 @@ def chatbot_query(request):
             return JsonResponse({'error': 'Message vide'}, status=400)
 
         # Clé API
-        api_key = os.getenv('GEMINI_API_KEY')
+        api_key = os.getenv('OPENAI_API_KEY')
         if not api_key:
-            return JsonResponse({'error': 'Clé API non configurée'}, status=500)
+            return JsonResponse({'error': 'Clé API OpenAI non configurée'}, status=500)
 
         # Données boutique en temps réel
         donnees = get_donnees_boutique(request.user)
 
-        # Client Gemini
-        client = genai.Client(api_key=api_key)
+        # Client OpenAI
+        client = OpenAI(api_key=api_key)
 
         # Construire l'historique des messages
         messages = []
         for msg in historique[-10:]:  # 10 derniers messages max
-            role    = 'user' if msg['role'] == 'user' else 'model'
-            messages.append(types.Content(
-                role=role,
-                parts=[types.Part(text=msg['content'])]
-            ))
+            messages.append({
+                'role': msg['role'],
+                'content': msg['content']
+            })
 
         # Ajouter le nouveau message
-        messages.append(types.Content(
-            role='user',
-            parts=[types.Part(text=message)]
-        ))
+        messages.append({
+            'role': 'user',
+            'content': message
+        })
 
-        # ✅ Utilisation du modèle 'gemini-pro' (disponible sur v1beta)
-        response = client.models.generate_content(
-            model='gemini-pro',  # ✅ Modèle disponible pour generateContent sur v1beta
-            config=types.GenerateContentConfig(
-                system_instruction=construire_prompt_systeme(
-                    request.user, donnees
-                ),
-                max_output_tokens=500,
-                temperature=0.7,
+        # ✅ Appel à OpenAI avec gpt-4o-mini (stable et performant)
+        response = client.chat.completions.create(
+            model='gpt-4o-mini',
+            messages=messages,
+            system=construire_prompt_systeme(
+                request.user, donnees
             ),
-            contents=messages,
+            max_tokens=500,
+            temperature=0.7,
         )
 
-        reponse_text = response.text or "Je n'ai pas pu générer une réponse."
+        reponse_text = response.choices[0].message.content or "Je n'ai pas pu générer une réponse."
 
         return JsonResponse({
             'reponse': reponse_text,
