@@ -287,8 +287,10 @@ def chatbot_query(request):
         # Ajouter le nouveau message
         messages.append({'role': 'user', 'content': message})
 
-        # Modèle par défaut officiel et à jour : llama-3.3-70b-versatile
-        modele = os.getenv('GROQ_MODEL', 'llama-3.3-70b-versatile')
+        # Modèle par défaut : llama-3.3-70b-versatile a été déprécié par Groq
+        # (juin 2026). Remplacé par openai/gpt-oss-120b, recommandé par Groq
+        # comme équivalent performant.
+        modele = os.getenv('GROQ_MODEL', 'openai/gpt-oss-120b')
 
         response = client.chat.completions.create(
             model=modele,
@@ -309,8 +311,15 @@ def chatbot_query(request):
             msg = '❌ Clé API invalide. Vérifiez GROQ_API_KEY.'
         elif '429' in err:
             msg = '⚠️ Trop de requêtes. Réessayez dans quelques secondes.'
-        elif 'decommissioned' in err.lower():
-            msg = '⚠️ Modèle obsolète. Mettez à jour GROQ_MODEL dans vos variables d\'environnement vers llama-3.3-70b-versatile.'
+        elif (
+            'decommissioned' in err.lower()
+            or 'model_not_found' in err.lower()
+            or '404' in err
+        ):
+            msg = (
+                '⚠️ Modèle obsolète. Mettez à jour GROQ_MODEL dans vos variables'
+                " d'environnement vers openai/gpt-oss-120b."
+            )
         else:
             msg = f'⚠️ Erreur : {err}'
         return JsonResponse({'reponse': msg}, status=200)
