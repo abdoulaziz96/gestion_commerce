@@ -255,7 +255,7 @@ def chatbot_query(request):
 
         # Appel Groq
         response = client.chat.completions.create(
-            model='llama-3.1-8b-instant',
+            model=os.getenv('GROQ_MODEL', 'llama-3.3-70b-versatile'),
             max_tokens=500,
             messages=messages,
         )
